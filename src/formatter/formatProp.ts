@@ -1,6 +1,6 @@
-import spacer from './spacer';
+import type { Options, PropsState } from './../options';
 import formatPropValue from './formatPropValue';
-import type { Options } from './../options';
+import spacer from './spacer';
 
 type FormattedProp = {
   attributeFormattedInline: string;
@@ -16,19 +16,36 @@ export default (
   defaultValue: any,
   inline: boolean,
   lvl: number,
-  options: Options,
+  options: Options
 ): FormattedProp => {
   if (!hasValue && !hasDefaultValue) {
     throw new Error(
-      `The prop "${name}" has no value and no default: could not be formatted`,
+      `The prop "${name}" has no value and no default: could not be formatted`
     );
   }
 
   const usedValue = hasValue ? value : defaultValue;
 
-  const { useBooleanShorthandSyntax, tabStop } = options;
+  const { useBooleanShorthandSyntax, tabStop, formatProps } = options;
 
-  const formattedPropValue = formatPropValue(usedValue, inline, lvl, options);
+  const formattedPropValue = (() => {
+    const fallback = (state: PropsState) =>
+      formatPropValue(state.value, state.inline, state.lvl, options);
+
+    if (typeof formatProps === 'function') {
+      return formatProps({ name, value: usedValue, inline, lvl, fallback });
+    }
+
+    if (
+      typeof formatProps === 'object' &&
+      formatProps !== null &&
+      (formatProps[name] || formatProps._)
+    ) {
+      return (formatProps[name] ?? formatProps._)({ name, value: usedValue, inline, lvl, fallback });
+    }
+
+    return fallback({ value: usedValue, inline, lvl });
+  })();
 
   let attributeFormattedInline = ' ';
   let attributeFormattedMultiline = `\n${spacer(lvl + 1, tabStop)}`;

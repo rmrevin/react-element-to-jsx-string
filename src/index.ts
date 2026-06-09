@@ -1,12 +1,13 @@
-import formatTree from './formatter/formatTree';
-import parseReactElement from './parser/parseReactElement';
 import type { ReactElement, ReactNode } from 'react';
+import formatTree from './formatter/formatTree';
 import type { Options, PublicOptions } from './options';
+import parseReactElement from './parser/parseReactElement';
 
 const reactElementToJsxString = (
   element: ReactNode,
   {
     filterProps = [],
+    formatProps = {},
     showDefaultProps = true,
     showFunctions = false,
     functionValue,
@@ -24,6 +25,7 @@ const reactElementToJsxString = (
 
   const options: Options = {
     filterProps,
+    formatProps,
     showDefaultProps,
     showFunctions,
     functionValue,
@@ -47,4 +49,4 @@ export {
   inlineFunction,
   preserveFunctionLineBreak,
 } from './formatter/formatFunction';
-export type { PublicOptions as Options } from './options';
+export type { PublicOptions as Options, FilterPropsFunction, FormatPropsFunction } from './options';

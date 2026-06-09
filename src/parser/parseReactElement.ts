@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
 import type { Key, ReactElement, ReactNode } from 'react';
+import React, { Fragment } from 'react';
 import {
   ForwardRef,
   isContextConsumer,
@@ -13,13 +13,13 @@ import {
   Memo,
 } from 'react-is';
 import type { Options } from './../options';
+import type { TreeNode } from './../tree';
 import {
-  createStringTreeNode,
   createNumberTreeNode,
   createReactElementTreeNode,
   createReactFragmentTreeNode,
+  createStringTreeNode,
 } from './../tree';
-import type { TreeNode } from './../tree';
 
 const supportFragment = Boolean(Fragment);
 
@@ -71,6 +71,8 @@ const getReactElementDisplayName = (element: ReactElement): string => {
         return elementLike.type.displayName;
       }
       return getFunctionTypeName(elementLike.type);
+    case Boolean(elementLike.type.displayName):
+      return elementLike.type.displayName;
     case isForwardRef(element):
     case isMemo(element):
       return getWrappedComponentDisplayName(elementLike.type);
