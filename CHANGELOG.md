@@ -1,3 +1,7 @@
+# [17.2.0](https://github.com/rmrevin/react-element-to-jsx-string/compare/v17.1.0...v17.2.0) (2026-06-17)
+
+
+
 # 17.1.0 (2026-06-17)
 
 
