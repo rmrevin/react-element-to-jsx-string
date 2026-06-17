@@ -18,6 +18,21 @@ describe('formatTreeNode', () => {
     );
   });
 
+  it('should format function tree node', () => {
+    function renderChild() {
+      return 'value';
+    }
+
+    expect(
+      formatTreeNode(
+        { type: 'function', value: renderChild },
+        true,
+        0,
+        { showFunctions: true },
+      ),
+    ).toBe('{function renderChild() {return \'value\';}}');
+  });
+
   it('should format react element tree node', () => {
     expect(
       formatTreeNode(

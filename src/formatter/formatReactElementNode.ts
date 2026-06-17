@@ -157,6 +157,7 @@ export default (
       inline,
       lvl,
       options,
+      { node },
     );
 
     if (isMultilineAttribute) {

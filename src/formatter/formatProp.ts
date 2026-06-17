@@ -1,3 +1,4 @@
+import type { ReactElementTreeNode } from '../tree';
 import type { Options, PropsState } from './../options';
 import formatPropValue from './formatPropValue';
 import spacer from './spacer';
@@ -16,7 +17,8 @@ export default (
   defaultValue: any,
   inline: boolean,
   lvl: number,
-  options: Options
+  options: Options,
+  context?: { node: ReactElementTreeNode }
 ): FormattedProp => {
   if (!hasValue && !hasDefaultValue) {
     throw new Error(
@@ -33,7 +35,7 @@ export default (
       formatPropValue(state.value, state.inline, state.lvl, options);
 
     if (typeof formatProps === 'function') {
-      return formatProps({ name, value: usedValue, inline, lvl, fallback });
+      return formatProps({ name, value: usedValue, inline, lvl, context, fallback });
     }
 
     if (
@@ -41,7 +43,14 @@ export default (
       formatProps !== null &&
       (formatProps[name] || formatProps._)
     ) {
-      return (formatProps[name] ?? formatProps._)({ name, value: usedValue, inline, lvl, fallback });
+      return (formatProps[name] ?? formatProps._)({
+        name,
+        value: usedValue,
+        inline,
+        lvl,
+        context,
+        fallback,
+      });
     }
 
     return fallback({ value: usedValue, inline, lvl });

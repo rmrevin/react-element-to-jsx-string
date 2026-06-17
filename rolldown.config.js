@@ -9,12 +9,12 @@ const extractExternals = () => [
 module.exports = defineConfig({
   input: 'src/index.ts',
   output: [
-    {
-      file: pkg.main,
-      format: 'cjs',
-      sourcemap: true,
-      exports: 'named',
-    },
+    // {
+    //   file: pkg.main,
+    //   format: 'cjs',
+    //   sourcemap: true,
+    //   exports: 'named',
+    // },
     {
       file: pkg.module,
       format: 'esm',

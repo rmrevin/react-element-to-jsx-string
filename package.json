@@ -3,9 +3,7 @@
   "version": "17.0.1",
   "description": "Turn a ReactElement into the corresponding JSX string.",
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610",
-  "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "browser": "dist/cjs/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist"

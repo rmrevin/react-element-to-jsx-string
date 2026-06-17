@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import type { ReactElementTreeNode } from './tree';
 
 export type FilterPropsFunction = (value: any, key: string) => boolean;
 export type FilterProps = string[] | FilterPropsFunction;
@@ -13,6 +14,7 @@ export type FormatPropsFunction<V = any> = (
   props: PropsState<V> & {
     name: string;
     fallback: (state: PropsState) => string;
+    context?: { node: ReactElementTreeNode };
   }
 ) => string;
 
@@ -23,6 +25,7 @@ export type FormatProps =
 export type Options = {
   filterProps: FilterProps;
   formatProps: FormatProps;
+  functions: Record<string, string>;
   showDefaultProps: boolean;
   showFunctions: boolean;
   functionValue?: Function;

@@ -20,6 +20,28 @@ describe('parseReactElement', () => {
     });
   });
 
+  it('should parse a react element with a function as children', () => {
+    const fn = () => 'Hello world';
+    const element = React.createElement(
+      'div',
+      null,
+      fn as unknown as React.ReactNode,
+    );
+
+    expect(parseReactElement(element, options)).toEqual({
+      type: 'ReactElement',
+      displayName: 'div',
+      defaultProps: {},
+      props: {},
+      childrens: [
+        {
+          type: 'function',
+          value: fn,
+        },
+      ],
+    });
+  });
+
   it('should filter empty childrens', () => {
     expect(
       parseReactElement(

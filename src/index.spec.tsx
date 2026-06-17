@@ -1019,6 +1019,62 @@ describe('reactElementToJSXString(ReactElement)', () => {
     );
   });
 
+  it('should render function as children with noRefCheck by default', () => {
+    const children = () => 'value';
+    const element = React.createElement(
+      'div',
+      null,
+      children as unknown as React.ReactNode,
+    );
+
+    expect(reactElementToJSXString(element)).toEqual(
+      `<div>
+  {function noRefCheck() {}}
+</div>`,
+    );
+  });
+
+  it('should render function as children when "showFunctions" is true', () => {
+    function renderChild() {
+      return 'value';
+    }
+
+    const element = React.createElement(
+      'div',
+      null,
+      renderChild as unknown as React.ReactNode,
+    );
+
+    expect(
+      reactElementToJSXString(element, {
+        showFunctions: true,
+      }),
+    ).toEqual(
+      `<div>
+  {function renderChild() {return 'value';}}
+</div>`,
+    );
+  });
+
+  it('should render function children with the "functionValue" option', () => {
+    const children = () => 'value';
+    const element = React.createElement(
+      'div',
+      null,
+      children as unknown as React.ReactNode,
+    );
+
+    expect(
+      reactElementToJSXString(element, {
+        functionValue: () => '...',
+      }),
+    ).toEqual(
+      `<div>
+  {...}
+</div>`,
+    );
+  });
+
   it('reactElementToJSXString(<Fragment><h1>foo</h1><p>bar</p></Fragment>)', () => {
     expect(
       reactElementToJSXString(
@@ -1297,7 +1353,9 @@ describe('reactElementToJSXString(ReactElement)', () => {
       reactElementToJSXString(
         <Ctx.Consumer>{theme => <Button theme={theme} />}</Ctx.Consumer>,
       ),
-    ).toEqual('<Context.Consumer />');
+    ).toEqual(`<Context.Consumer>
+  {function noRefCheck() {}}
+</Context.Consumer>`);
   });
 
   it('should stringify `Contex.Consumer` with `displayName` correctly', () => {
@@ -1310,7 +1368,9 @@ describe('reactElementToJSXString(ReactElement)', () => {
       reactElementToJSXString(
         <Ctx.Consumer>{theme => <Button theme={theme} />}</Ctx.Consumer>,
       ),
-    ).toEqual('<MyCtx.Consumer />');
+    ).toEqual(`<MyCtx.Consumer>
+  {function noRefCheck() {}}
+</MyCtx.Consumer>`);
   });
 
   it('should stringify `lazy` component correctly', () => {

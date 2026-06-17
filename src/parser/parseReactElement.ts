@@ -15,6 +15,7 @@ import {
 import type { Options } from './../options';
 import type { TreeNode } from './../tree';
 import {
+  createFunctionTreeNode,
   createNumberTreeNode,
   createReactElementTreeNode,
   createReactFragmentTreeNode,
@@ -37,6 +38,7 @@ type ReactElementLike = ReactElement & {
   props: Props;
   key: Key | null;
 };
+type ReactElementChild = ReactElement | string | number | Function;
 
 const getFunctionTypeName = (functionType: ReactComponentLike): string => {
   if (!functionType.name || functionType.name === '_default') {
@@ -71,8 +73,6 @@ const getReactElementDisplayName = (element: ReactElement): string => {
         return elementLike.type.displayName;
       }
       return getFunctionTypeName(elementLike.type);
-    case Boolean(elementLike.type.displayName):
-      return elementLike.type.displayName;
     case isForwardRef(element):
     case isMemo(element):
       return getWrappedComponentDisplayName(elementLike.type);
@@ -80,6 +80,8 @@ const getReactElementDisplayName = (element: ReactElement): string => {
       return `${elementLike.type._context.displayName || 'Context'}.Consumer`;
     case isContextProvider(element):
       return `${elementLike.type.displayName || 'Context'}.Provider`;
+    case Boolean(elementLike.type.displayName):
+      return elementLike.type.displayName;
     case isLazy(element):
       return 'Lazy';
     case isProfiler(element):
@@ -95,11 +97,29 @@ const getReactElementDisplayName = (element: ReactElement): string => {
 
 const noChildren = (_propsValue: any, propName: string) => propName !== 'children';
 
-const onlyMeaningfulChildren = (children: ReactNode): boolean =>
+const onlyMeaningfulChildren = (children: ReactNode | Function): boolean =>
   children !== true &&
   children !== false &&
   children !== null &&
+  children !== undefined &&
   children !== '';
+
+const toChildrenArray = (
+  children: ReactNode | Function,
+): Array<ReactNode | Function> => {
+  if (children === null || children === undefined) {
+    return [];
+  }
+
+  if (Array.isArray(children)) {
+    return children.reduce<Array<ReactNode | Function>>(
+      (acc, child) => acc.concat(toChildrenArray(child)),
+      [],
+    );
+  }
+
+  return [children];
+};
 
 const filterProps = (originalProps: Props, cb: (value: any, key: string) => boolean): Props => {
   const filteredProps: Props = {};
@@ -112,7 +132,7 @@ const filterProps = (originalProps: Props, cb: (value: any, key: string) => bool
 };
 
 const parseReactElement = (
-  element: ReactElement | string | number,
+  element: ReactElementChild,
   options: Options,
 ): TreeNode => {
   const { displayName: displayNameFn = getReactElementDisplayName } = options;
@@ -121,6 +141,8 @@ const parseReactElement = (
     return createStringTreeNode(element);
   } else if (typeof element === 'number') {
     return createNumberTreeNode(element);
+  } else if (typeof element === 'function') {
+    return createFunctionTreeNode(element);
   } else if (!React.isValidElement(element)) {
     throw new Error(
       `react-element-to-jsx-string: Expected a React.Element, got \`${typeof element}\``,
@@ -139,9 +161,9 @@ const parseReactElement = (
   }
 
   const defaultProps = filterProps(elementLike.type.defaultProps || {}, noChildren);
-  const childrens = React.Children.toArray(elementLike.props.children)
+  const childrens = toChildrenArray(elementLike.props.children)
     .filter(onlyMeaningfulChildren)
-    .map(child => parseReactElement(child as ReactElement | string | number, options));
+    .map(child => parseReactElement(child as ReactElementChild, options));
 
   if (supportFragment && elementLike.type === Fragment) {
     return createReactFragmentTreeNode(key, childrens);

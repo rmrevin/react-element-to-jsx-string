@@ -8,6 +8,7 @@ const reactElementToJsxString = (
   {
     filterProps = [],
     formatProps = {},
+    functions = {},
     showDefaultProps = true,
     showFunctions = false,
     functionValue,
@@ -26,6 +27,7 @@ const reactElementToJsxString = (
   const options: Options = {
     filterProps,
     formatProps,
+    functions,
     showDefaultProps,
     showFunctions,
     functionValue,
@@ -38,7 +40,10 @@ const reactElementToJsxString = (
   };
 
   return formatTree(
-    parseReactElement(element as ReactElement | string | number, options),
+    parseReactElement(
+      element as ReactElement | string | number | Function,
+      options,
+    ),
     options,
   );
 };
