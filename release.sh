@@ -20,4 +20,4 @@ git commit -am "$(json -f package.json version)"
 git tag v`json -f package.json version`
 git push origin master
 git push --tags origin master
-npm publish
+npm publish --access public
