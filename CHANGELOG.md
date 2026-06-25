@@ -1,3 +1,12 @@
+## [17.2.1](https://github.com/rmrevin/react-element-to-jsx-string/compare/v17.2.0...v17.2.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* Fixed package export ([9dc5c0e](https://github.com/rmrevin/react-element-to-jsx-string/commit/9dc5c0ea19489658e739188e7c446ece918a2a7b))
+
+
+
 # [17.2.0](https://github.com/rmrevin/react-element-to-jsx-string/compare/v17.1.0...v17.2.0) (2026-06-17)
 
 
